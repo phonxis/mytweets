@@ -24,7 +24,7 @@ SECRET_KEY = 'f_fc@c_25bbf-(b-gfcz4gtli$5*hx@d6g*er_yr@*i1k)$4m8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 
@@ -55,7 +55,9 @@ ROOT_URLCONF = 'mytweets.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,7 +83,11 @@ DATABASES = {
     }
 }
 
-
+STATICFILES_DIRS = (
+    os.path.join(
+        os.path.dirname(__file__), 'static'
+        ),
+    )
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
