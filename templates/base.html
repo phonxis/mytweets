@@ -1,13 +1,36 @@
 {% load staticfiles %}
 <html>
-<head>
-<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen" />
-</head>
-<body>
-	{% block content %}
-	<h1 class="text-info">HELLO {{ name }} {{ version }}!</h1>
-	{% endblock %}
 
-	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<head>
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen" /> 
+	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+	{% block css %}
+
+	{% endblock %}
+</head>
+
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+	<a class="navbar-brand" href="#">MyTweets</a>
+		<p class="navbar-text navbar-right">User Profile</p>
+	</nav>
+	
+	<div class="container" style="padding-top:75px;">
+	{% block content %}
+
+	{% endblock %}
+	</div>
+
+	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+		<p class="navbar-text navbar-right">Footer</p>
+	</nav>
+
+	<script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+
+	<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+	 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/base.js' %}"></script>
+	{% block js %}
+    {% endblock %}
 </body>
 </html>

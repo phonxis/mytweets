@@ -37,6 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_profile',
+    'tweets'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -85,7 +87,7 @@ DATABASES = {
 
 STATICFILES_DIRS = (
     os.path.join(
-        os.path.dirname(__file__), 'static'
+        BASE_DIR, 'static'
         ),
     )
 # Internationalization
