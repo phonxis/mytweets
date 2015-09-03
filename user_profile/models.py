@@ -15,3 +15,13 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.username
+
+
+class UserFollowers(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    date = models.DateTimeField(auto_now_add=True)
+    count = models.IntegerField(default=1)
+    followers = models.ManyToManyField(User, related_name='followers')
+
+    def __str__(self):
+        return '{}, {}'.format(self.user, self.count)

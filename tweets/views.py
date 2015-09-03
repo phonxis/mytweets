@@ -4,13 +4,22 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
 from django.template.loader import render_to_string
 from django.views.generic import View
-from user_profile.models import User
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from user_profile.models import User, UserFollowers
 from tweets.models import Tweet, HashTag
 from tweets.forms import TweetForm, SearchForm
 import json
 
 
 # Create your views here.
+
+class LoginRequiredMixin(object):
+    u"""Ensures that user must be authenticated in order to access view."""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
 class Index(View):
@@ -22,17 +31,36 @@ class Index(View):
         return HttpResponse('post request')
 
 
-class Profile(View):
+class Profile(LoginRequiredMixin, View):
     """	User profile page reachable from /user/<username> URL	"""
 
     def get(self, request, username):
-        # params = dict()()() i dont know that this mean
         params = {}
-        user = User.objects.get(username=username)
-        tweets = Tweet.objects.filter(user=user)
+        userProfile = User.objects.get(username=username)
+        userFollower = UserFollowers.objects.get(user=userProfile)
+        if userFollower.followers.filter(username=request.user.username).exists():
+            params["following"] = True
+        else:
+            params["following"] = False
+        form = TweetForm(initial={'country': 'Global'})
+        search_form = SearchForm()
+        tweets = Tweet.objects.filter(user=userProfile).order_by('-created_date')
         params["tweets"] = tweets
-        params["user"] = user
+        params["user"] = userProfile
+        params["form"] = form
+        params["search"] = search_form
         return render(request, 'profile.html', params)
+
+    def post(self, request, username):
+        follow = request.POST['follow']
+        user = User.objects.get(username=request.user.username)
+        userProfile = User.objects.get(username=username)
+        userFollower, status = UserFollowers.objects.get_or_create(user=userProfile)
+        if follow == "True":
+            userFollower.followers.add(user)
+        else:
+            userFollower.followers.remove(user)
+        return HttpResponse(json.dumps(""), content_type="application/json")
 
 
 class PostTweet(View):
@@ -62,6 +90,7 @@ class HashTagCloud(View):
         params["tweets"] = hashtag.tweets
         return render(request, 'hashtag.html', params)
 
+
 class Search(View):
     """Search all tweets with query /search/?query=<query> URL"""
 
@@ -81,3 +110,16 @@ class Search(View):
             return HttpResponse(json.dumps(return_str), content_type="application/json")
         else:
             HttpResponseRedirect("/search")
+
+
+class UserRedirect(View):
+    def get(self, request):
+        return HttpResponseRedirect('/user/'+request.user.username)
+
+
+class MostFollowedUsers(View):
+    def get(self, request):
+        userFollower = UserFollowers.objects.order_by('-count')[:10] #list only the top 10 users
+        params = dict()
+        params['userFollowers'] = userFollower
+        return render(request, 'users.html', params)
