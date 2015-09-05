@@ -16,7 +16,14 @@ Including another URLconf
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
 
-from tweets.views import Index, Profile, PostTweet, HashTagCloud, Search, UserRedirect, MostFollowedUsers
+from tweets.views import (Index,
+                          Profile,
+                          PostTweet,
+                          HashTagCloud,
+                          Search,
+                          UserRedirect,
+                          MostFollowedUsers,
+                          Register)
 
 admin.autodiscover()
 
@@ -31,4 +38,6 @@ urlpatterns = patterns('',
                        url(r'^logout/$', 'django.contrib.auth.views.logout'),
                        url(r'^profile/$', UserRedirect.as_view()),
                        url(r'^mostFollowed/$', MostFollowedUsers.as_view()),
+                       url(r'^user/(\w+)/?page=<page_number>', Profile.as_view()),
+                       url(r'register/$', Register.as_view())
                        )

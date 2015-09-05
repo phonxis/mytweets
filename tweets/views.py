@@ -1,4 +1,5 @@
 #from django.core.serializers import json
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context
@@ -7,9 +8,13 @@ from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from user_profile.models import User, UserFollowers
+from user_profile.forms import RegisterForm
 from tweets.models import Tweet, HashTag
 from tweets.forms import TweetForm, SearchForm
 import json
+
+
+TWEET_PER_PAGE = 5
 
 
 # Create your views here.
@@ -37,28 +42,46 @@ class Profile(LoginRequiredMixin, View):
     def get(self, request, username):
         params = {}
         userProfile = User.objects.get(username=username)
-        userFollower = UserFollowers.objects.get(user=userProfile)
-        if userFollower.followers.filter(username=request.user.username).exists():
-            params["following"] = True
-        else:
-            params["following"] = False
+        #userFollower = UserFollowers.objects.get(user=userProfile)
+        try:
+            userFollower = UserFollowers.objects.get(user=userProfile)
+            if userFollower.followers.filter(username=request.user.username).exists():
+                params["following"] = True
+            else:
+                params["following"] = False
+        except:
+            userFollower = []
         form = TweetForm(initial={'country': 'Global'})
         search_form = SearchForm()
         tweets = Tweet.objects.filter(user=userProfile).order_by('-created_date')
+        paginator = Paginator(tweets, TWEET_PER_PAGE)
+        page = request.GET.get('page')
+        try:
+            tweets = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            tweets = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            tweets = paginator.page(paginator.num_pages)
         params["tweets"] = tweets
-        params["user"] = userProfile
+        params["profile"] = userProfile
         params["form"] = form
         params["search"] = search_form
         return render(request, 'profile.html', params)
 
     def post(self, request, username):
         follow = request.POST['follow']
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username= request.user.username)
         userProfile = User.objects.get(username=username)
         userFollower, status = UserFollowers.objects.get_or_create(user=userProfile)
-        if follow == "True":
+        userFollower.count += 1
+        userFollower.save()
+        if follow == 'true':
+            #follow user
             userFollower.followers.add(user)
         else:
+            #unfollow user
             userFollower.followers.remove(user)
         return HttpResponse(json.dumps(""), content_type="application/json")
 
@@ -123,3 +146,26 @@ class MostFollowedUsers(View):
         params = dict()
         params['userFollowers'] = userFollower
         return render(request, 'users.html', params)
+
+
+class Register(View):
+    def get(self, request):
+        params = dict()
+        registration_form = RegisterForm()
+        params['register'] = registration_form
+        return render(request, 'registration/register.html', params)
+
+    def post(self, request):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            try:
+                user = User.objects.get(username=username)
+            except:
+                user = User(username=username, email=email)
+                user.set_password(password)
+                user.save()
+                #user = super(user, self).save(commit=False)
+                return HttpResponseRedirect('/login')
