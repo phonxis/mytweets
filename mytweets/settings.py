@@ -73,7 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mytweets.wsgi.application'
-
+AUTH_USER_MODEL = 'user_profile.User'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases

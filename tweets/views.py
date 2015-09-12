@@ -15,7 +15,8 @@ import json
 
 
 TWEET_PER_PAGE = 5
-
+import logging
+logger = logging.getLogger('django')
 
 # Create your views here.
 
@@ -27,13 +28,23 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
-class Index(View):
+class Index(LoginRequiredMixin, View):
     def get(self, request):
         params = {"name": "Django", "version": "1.8"}
         return render(request, 'base.html', params)
 
     def post(self):
         return HttpResponse('post request')
+
+
+class UserRedirect(View):
+    def get(self, request):
+        if request.user.is_authenticated():
+            logger.info('authorized user')
+            return HttpResponseRedirect('/user/'+request.user.username)
+        else:
+            logger.info('unauthorized user')
+            return HttpResponseRedirect('/login/')
 
 
 class Profile(LoginRequiredMixin, View):
@@ -114,7 +125,7 @@ class HashTagCloud(View):
         return render(request, 'hashtag.html', params)
 
 
-class Search(View):
+class Search(LoginRequiredMixin, View):
     """Search all tweets with query /search/?query=<query> URL"""
 
     def get(self, request):
@@ -135,12 +146,13 @@ class Search(View):
             HttpResponseRedirect("/search")
 
 
-class UserRedirect(View):
+'''class UserRedirect(View):
     def get(self, request):
         return HttpResponseRedirect('/user/'+request.user.username)
+'''
 
 
-class MostFollowedUsers(View):
+class MostFollowedUsers(LoginRequiredMixin, View):
     def get(self, request):
         userFollower = UserFollowers.objects.order_by('-count')[:10] #list only the top 10 users
         params = dict()
