@@ -53,9 +53,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'mytweets.urls'
 
+#linux dev
+#TEMPLATE_DIRS = (
+#    os.path.join(BASE_DIR, 'templates'),
+#)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        #windows dev
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
         ],
@@ -78,6 +84,17 @@ AUTH_USER_MODEL = 'user_profile.User'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
+    #linux dev
+    #'default': {
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'mytweets',
+    #    'USER': 'phonx',
+    #    'PASSWORD': '4602161',
+    #    'HOST': 'localhost',
+    #    'PORT': '',
+    #}
+
+    #windows dev
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),

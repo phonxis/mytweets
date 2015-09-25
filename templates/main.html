@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Welcome to MyTweets app!</h1>
+        {% if not user.username %}
+            <p><a class="btn btn-primary btn-lg" href="/login" role="button">Sign in</a></p>
+        {% else %}
+            <p><a class="btn btn-primary btn-lg" href="/user/{{ user.username }}" role="button">My page</a></p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

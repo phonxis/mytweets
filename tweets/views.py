@@ -28,10 +28,9 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
-class Index(LoginRequiredMixin, View):
+class Index(View):
     def get(self, request):
-        params = {"name": "Django", "version": "1.8"}
-        return render(request, 'base.html', params)
+        return render(request, 'main.html') #'base.html'
 
     def post(self):
         return HttpResponse('post request')
@@ -53,7 +52,6 @@ class Profile(LoginRequiredMixin, View):
     def get(self, request, username):
         params = {}
         userProfile = User.objects.get(username=username)
-        #userFollower = UserFollowers.objects.get(user=userProfile)
         try:
             userFollower = UserFollowers.objects.get(user=userProfile)
             if userFollower.followers.filter(username=request.user.username).exists():

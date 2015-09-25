@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block navbar %}
     <p class="navbar-text navbar-right">
-        <span class="glyphicon glyphicon-user"></span> {{ user.username }}
+        <span class="glyphicon glyphicon-user"></span> <a href="/user/{{ user.username }}">{{ user.username }}</a>
     </p>
 <p></p>
 {% endblock %}

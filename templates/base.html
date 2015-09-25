@@ -2,41 +2,32 @@
 <html>
 
 <head>
-	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen" /> 
-	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-	{% block css %}
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen" />
 
+	{% block css %}
 	{% endblock %}
 </head>
 
 <body style="width: 100%; height: 100%;">
-	<div class="navbar navbar-default" role="navigation" style="min-width: 100%; position: relative;">
-	<a class="navbar-brand" href="#">MyTweets</a>
-		{% block navbar %}
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="min-width: 100%; position: relative; margin-bottom: 0;">
+	    <a class="navbar-brand" href="/">MyTweets</a>
 
+		{% block navbar %}
 		{% endblock %}
 	</div>
 
-	<div class="container" style="padding-top:75px;">
-	{% block content %}
+	<div class="container" style="padding-top:55px;">
 
-	{% endblock %}
+	    {% block content %}
+	    {% endblock %}
+
 	</div>
 
-	<!-- <div class="navbar navbar-default navbar-fixed-bottom footer" role="navigation">
-		<p class="navbar-text navbar-right">Footer</p>
-	</div> -->
-
-	<!-- <div class="navbar navbar-default" role="navigation" style="min-width: 100%; position: relative;"></div> -->
-
 	<script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
-
-	<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
-	 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 	<script src="{% static 'js/base.js' %}"></script>
 
 	{% block js %}
-
     {% endblock %}
 </body>
 </html>

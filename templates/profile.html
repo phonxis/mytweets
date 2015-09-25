@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block navbar %}
-<p class="navbar-text navbar-left">
+<p class="navbar-text navbar-left">         
 	<span class="glyphicon glyphicon-user"></span>{{ profile.username }}'s Profile Page
 	{% if profile.username != user.username %}
 		<span class="btn btn-xs btn-default follow-btn"
@@ -16,17 +16,26 @@
 		</span>
 	{% endif %}
 </p>
-{% if profile.username == user.username %}
-<p class="navbar-text navbar-right">
-	<a href="/logout">
-		Logout
-	</a>
-</p>
-{% endif %}
-<p class="navbar-text navbar-right">
-	<span class="glyphicon glyphicon-user"></span><a href="/user/{{ user.username }}">{{ user.username }}</a>
-</p>
-<p></p>
+
+    <!-- <div class="collapse navbar-collapse" style="margin-right: 1.5%;">-->
+      <ul class="nav navbar-nav navbar-right" style="margin-right: 1.5%;">
+        <li class="dropdown">
+          <a href="#"
+             class="dropdown-toggle"
+             data-toggle="dropdown"
+             role="button"
+             aria-haspopup="true"
+             aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/user/{{ user.username }}">My page</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    <!--</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  /.navbar-collapse -->
+
+
 {% endblock %}
 
 {% block content %}
@@ -56,6 +65,30 @@
 		{% endfor %}
 	</div>
 </div>
+{% if user.username != profile.username and not tweets %}
+    <div style="text-align: center;">
+    This user not add tweets on his page.
+    </div>
+    {% endif %}
+
+    {% if tweets %}
+    <nav>
+  <ul class="pager">
+      {% if tweets.has_previous %}
+            <li class="previous"><a href="/user/{{ profile.username }}/?page={{ tweets.previous_page_number }}"><span aria-hidden="true">&larr;</span> Newer</a></li>
+      {% else %}
+            <li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> Newer</a></li>
+      {% endif %}
+
+      {% if tweets.has_next %}
+            <li class="next"><a href="/user/{{ profile.username }}/?page={{ tweets.next_page_number }}">Older <span aria-hidden="true">&rarr;</span></a></li>
+      {% else %}
+            <li class="next disabled"><a href="#">Older <span aria-hidden="true">&rarr;</span></a></li>
+      {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+
 {% endblock %}
 
 {% block js %}

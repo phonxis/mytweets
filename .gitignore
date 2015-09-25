@@ -47,3 +47,4 @@ Temporary Items
 *.pyc
 #and cache
 mytweets/__pycache__
+mytweets/1settings.py
